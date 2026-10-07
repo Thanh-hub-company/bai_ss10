@@ -1,0 +1,32 @@
+server:
+    port: 8083 # Chạy trên cổng độc lập
+
+spring:
+    application:
+        name: notification-service
+
+    # Cấu hình Kafka Consumer (Fan-out Pattern)
+    kafka:
+        bootstrap-servers: localhost:9094
+        consumer:
+            # QUAN TRỌNG: Group ID khác với inventory-service để nhận chung 1 tin nhắn độc lập
+            group-id: notification-group
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+            properties:
+                spring.json.trusted.packages: "*"
+
+    # Cấu hình SMTP gửi Email (Chức năng nâng cao)
+    # Lưu ý: Thay thông tin bằng email và App Password của bạn để test gửi thật
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: "your-email@gmail.com" # Điền email của bạn
+        password: "your-app-password"    # Mật khẩu ứng dụng Gmail (App Password)
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true

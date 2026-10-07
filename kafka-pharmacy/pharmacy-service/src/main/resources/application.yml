@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: pharmacy-service
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      # key serializer : chuỗi string đại diện cho medicineId
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # value serializer : chuyển đổi đối tượng OrderEvent thành chuỗi Json
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: 8081
+
+

@@ -1,0 +1,33 @@
+server:
+  port: 8084 # Port chạy riêng cho inventory-service
+
+spring:
+  application:
+    name: inventory-service
+
+  # Cấu hình H2 Database (In-Memory Database để test)
+  datasource:
+    url: jdbc:h2:mem:inventorydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true # Mở giao diện H2 Console tại http://localhost:8082/h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Cấu hình Kafka Consumer
+  kafka:
+    bootstrap-servers: localhost:9094 # Cổng kết nối Kafka Docker
+    consumer:
+      group-id: inventory-group       # Cụm Consumer xử lý kho (Đảm bảo không bị đọc trùng lặp)
+      auto-offset-reset: earliest     # Đọc từ tin nhắn sớm nhất nếu chưa có offset
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*" # Cho phép giải mã JSON từ mọi package DTO
+        spring.json.value.default.type: com.example.inventoryservice.dto.OrderEvent
+        spring.json.use.type.headers: false
